@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/" xmlns:a="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Complete booking</title>
+    <link th:href="@{/css/nav.css}" href="/static/css/nav.css" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/css/checkbox.css}" href="/static/css/checkbox.css" rel="stylesheet" type="text/css"/>
+
+    
+
+
+</head>
+
+<body>
+<header>
+    <div class="container">
+        <a href="/"><h1>BIO<span>TRIO</span></h1></a>
+        <nav>
+            <ul>
+                <li><a href="/moviesuser">Exit</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<div class="mainContent">
+
+
+<h2>Choose from 1 to 4 seats</h2>
+
+
+<form name="seat" th:object="${seatsCheck}" th:action="'/saveseats/'+${screening_id}" onsubmit="return !!(validateForm() & ifChecked())" method="post">
+    <table id="mytable" class="center">
+        <th:block th:each="seat: ${seatsCheck.getSeats()}">
+            <th:block th:if="${seat.getSeatNo()==1}">
+                <tr><td th:text="'Row ' + ${seat.getRowNo()}">
+
+            </th:block>
+            <td>
+                <label>
+                <input type="checkbox" id="check" name="check"
+                       th:disabled="${seat.getIsBooked()}"
+                       th:value="${seat.getRowNo()+'-'+seat.getSeatNo()}"
+                       th:field="*{checkedSeats}"
+                       onclick="checkboxes()">
+               </label>
+            </td>
+
+            <th:block th:if="${seat.getSeatNo()==seatsCheck.getSeats().get(seatsCheck.getSeats().size()-1).getSeatNo()}">
+                </tr>
+            </th:block>
+        </th:block>
+        <script>
+            //function that doesn't allow the user to select more than 4 seats
+            function checkboxes()
+            {
+                var inputElems = document.getElementsByTagName("input"),
+                    count = 0;
+                for (var i=0; i<inputElems.length; i++) {
+                    if (inputElems[i].type == "checkbox" && inputElems[i].checked == true){
+                        count++;
+                        if(count==5){
+                            alert("You can choose maximum 4 seats!");
+                            inputElems[i].checked=false;}
+                    }
+                }
+            }
+            //function that checks if phonenumber is inserted
+            function validateForm() {
+                var x = document.forms["seat"]["phonenumber"].value;
+                if (x == "") {
+                    alert("Phone number must be filled out");
+                    return false;
+                }
+                return true;
+            }
+            //function that checks if at least one seat is selected
+            function ifChecked() {
+                var inputElems = document.getElementsByTagName("input");
+                for (var i=0; i<inputElems.length; i++) {
+                    if (inputElems[i].type == "checkbox" && inputElems[i].checked == true){
+                            return true;
+                    }
+                }
+                alert("You have to choose a seat!");
+                return false;
+            }
+        </script>
+
+
+    </table>
+    <tr>
+        <h2>Enter phone number:</h2>
+        <input type="text" id="phonenumber" name="phonenumber">
+
+    </tr>
+    <input type="submit" value="Book">
+
+</form>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+</div>
+</body>
+
+</html>
